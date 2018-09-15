@@ -19,7 +19,7 @@ const styles = {
 
 class App extends Component {
   state = {
-    fillType: FILL_TYPE.CROSS,
+    fillType: FILL_TYPE.FILL,
     autoCheck: false,
     autoFill: false,
   };
@@ -28,7 +28,7 @@ class App extends Component {
     return (
       <Grid container direction="column" style={styles.grid}>
         <h1>Picross</h1>
-        <PicrossGrid />
+        <PicrossGrid fillType={this.state.fillType} />
         <PicrossControls />
       </Grid>
     );

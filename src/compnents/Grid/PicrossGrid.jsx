@@ -23,6 +23,10 @@ const TileGrid = styled.div`
 `;
 
 class PicrossGrid extends Component {
+  props: {
+    fillType: string,
+  };
+
   state = {
     solutionGrid: [],
     playerGrid: [],
@@ -31,7 +35,9 @@ class PicrossGrid extends Component {
   };
 
   componentDidMount() {
-    this.setState({ ...generateGrid() });
+    this.setState({ ...generateGrid() }, () => {
+      console.table(this.state.solutionGrid);
+    });
   }
 
   getGridColumnSize = () => {
@@ -40,7 +46,6 @@ class PicrossGrid extends Component {
 
   // column bounds
   displayDirectionCounts = (type, bounds) => {
-    console.log(type, bounds);
     return bounds.map((colArr, index) => {
       return (
         <Grid item key={index}>
@@ -61,13 +66,17 @@ class PicrossGrid extends Component {
   // main grid
   displayGrid = () => {
     const els = [];
+    const solution = this.state.solutionGrid;
     this.state.playerGrid.forEach((row, rowIndex) => {
-      row.forEach((item, columnIndex) => {
+      row.forEach((item, colIndex) => {
         els.push(
           <Tile
-            key={rowIndex + '-' + columnIndex}
+            rowIndex={rowIndex}
+            colIndex={colIndex}
+            key={rowIndex + '-' + colIndex}
             onTitleChange={this.handleTileChange}
-            value={row[columnIndex]}
+            value={row[colIndex]}
+            solution={solution[rowIndex][colIndex]}
           />,
         );
       });
@@ -76,7 +85,25 @@ class PicrossGrid extends Component {
   };
 
   // update tile mark
-  handleTileChange = () => {};
+  handleTileChange = ({ rowIndex, colIndex, value }) => {
+    const updatedGrid = this.state.playerGrid
+      .slice()
+      .map((row, currRowIndex) => {
+        return row.map((_, currColIndex) => {
+          if (currRowIndex === rowIndex && currColIndex === colIndex) {
+            if (value) {
+              return null;
+            }
+            return this.props.fillType;
+          }
+          return row[currColIndex];
+        });
+      });
+
+    this.setState({
+      playerGrid: updatedGrid,
+    });
+  };
 
   render() {
     const numColumns = this.getGridColumnSize();
@@ -93,7 +120,7 @@ class PicrossGrid extends Component {
             alignItems="flex-end"
             direction="column"
           >
-            {this.displayDirectionCounts('row', this.state.columnBounds)}
+            {this.displayDirectionCounts('row', this.state.rowBounds)}
           </Grid>
           <TileGrid templateColumns={`repeat(${numColumns}, auto)`}>
             {this.displayGrid()}
