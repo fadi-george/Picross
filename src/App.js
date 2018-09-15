@@ -1,19 +1,36 @@
+// @flow
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Grid from '@material-ui/core/Grid';
+
+// type
+import { FILL_TYPE } from './constants/grid';
+
+// components
+import PicrossGrid from './compnents/Grid';
+import PicrossControls from './compnents/Controls';
+
+const styles = {
+  grid: {
+    margin: '0 auto',
+    maxWidth: '600px',
+  },
+};
 
 class App extends Component {
+  state = {
+    fillType: FILL_TYPE.CROSS,
+    autoCheck: false,
+    autoFill: false,
+  };
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <Grid container direction="column" style={styles.grid}>
+        <h1>Picross</h1>
+        <PicrossGrid />
+        <PicrossControls />
+      </Grid>
     );
   }
 }
