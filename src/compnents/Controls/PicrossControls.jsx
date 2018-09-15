@@ -1,30 +1,29 @@
 // @flow
 import React, { Component } from 'react';
-import styled from 'styled-components';
 
-// styles
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: ${(props) => props.gridTemplateColumns};
-`;
+// icons
+import ReplayIcon from '@material-ui/icons/Replay';
+import GamepadIcon from '@material-ui/icons/Gamepad';
 
-class PicrossGrid extends Component {
-  state = {
-    solutionGrid: [],
-    playerGrid: [],
-    columnBounds: [],
-    rowBounds: [],
-  };
+// components
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
+import Drawer from '@material-ui/core/Drawer';
 
+class PicrossControls extends Component {
   render() {
     return (
-      <div>
-
-      </div>
+      <Drawer
+        variant="permanent"
+        classes={{
+          // paper: classes.drawerPaper,
+        }}
+      >
+        a
+      </Drawer>
     );
   }
 }
 
-PicrossGrid.propTypes = {};
-
-export default PicrossGrid;
+export default PicrossControls;

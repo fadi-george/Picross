@@ -37,6 +37,7 @@ const styles = {
     minHeight: 0,
     minWidth: 0,
     padding: '0 0 100% 0',
+    boxSizing: 'content-box',
   },
 };
 
