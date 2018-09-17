@@ -1,30 +1,111 @@
 // @flow
 import React, { Component } from 'react';
-import styled from 'styled-components';
 
-// styles
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: ${(props) => props.gridTemplateColumns};
-`;
+// icons
+import ReplayIcon from '@material-ui/icons/Replay';
+import GamepadIcon from '@material-ui/icons/Gamepad';
+import EditIcon from '@material-ui/icons/Edit';
+import CloseIcon from '@material-ui/icons/Close';
 
-class PicrossGrid extends Component {
-  state = {
-    solutionGrid: [],
-    playerGrid: [],
-    columnBounds: [],
-    rowBounds: [],
+// components
+import Tooltip from '@material-ui/core/Tooltip';
+import Toolbar from '@material-ui/core/Toolbar/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
+
+// constants
+import yellow from '@material-ui/core/colors/yellow';
+import { FILL_TYPE, CURSOR, RESET } from '../../constants/grid';
+
+const styles = {
+  toolBar: {
+    flexDirection: 'column',
+    backgroundColor: yellow[500],
+    padding: '8px',
+  },
+  selectedTool(isOn) {
+    if (isOn) {
+      return {
+        color: 'black',
+      };
+    }
+    return {};
+  },
+  closeIcon: {
+    borderWith: '2px',
+    borderStyle: 'solid',
+    borderRadius: '2px',
+  },
+};
+
+class PicrossControls extends Component {
+  props: {
+    onToolClick: Function,
+    cursorOn: boolean,
+    fillType: string,
   };
 
   render() {
-    return (
-      <div>
+    const onToolClick = this.props.onToolClick;
+    const fillType = this.props.fillType;
+    const toolTipProps = {
+      placement: 'right',
+      enterDelay: 500,
+    };
 
-      </div>
+    return (
+      <Paper>
+        <Toolbar style={styles.toolBar}>
+          {/* Reset Grid */}
+          <Tooltip title="Generate New Grid" {...toolTipProps}>
+            <IconButton
+              onClick={() => {
+                onToolClick(RESET);
+              }}
+            >
+              <ReplayIcon />
+            </IconButton>
+          </Tooltip>
+
+          {/* Direction cursor */}
+          <Tooltip title="Move with ArrowKeys" {...toolTipProps}>
+            <IconButton
+              style={styles.selectedTool(this.props.cursorOn)}
+              onClick={() => {
+                onToolClick(CURSOR);
+              }}
+            >
+              <GamepadIcon />
+            </IconButton>
+          </Tooltip>
+
+          {/* Fill with color */}
+          <Tooltip title="Color Fill" {...toolTipProps}>
+            <IconButton
+              style={styles.selectedTool(fillType === FILL_TYPE.FILL)}
+              onClick={() => {
+                onToolClick(FILL_TYPE.FILL);
+              }}
+            >
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+
+          {/* Fill with cross */}
+          <Tooltip title="Color Fill" {...toolTipProps}>
+            <IconButton
+              style={styles.selectedTool(fillType === FILL_TYPE.CROSS)}
+              onClick={() => {
+                onToolClick(FILL_TYPE.CROSS);
+              }}
+            >
+              <CloseIcon style={styles.closeIcon} />
+            </IconButton>
+          </Tooltip>
+        </Toolbar>
+      </Paper>
     );
   }
 }
 
-PicrossGrid.propTypes = {};
-
-export default PicrossGrid;
+export default PicrossControls;

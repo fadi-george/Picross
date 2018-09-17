@@ -5,9 +5,7 @@ import styled from 'styled-components';
 // components
 import Tile from './Tile';
 import Grid from '@material-ui/core/Grid';
-
-// helpers
-import { generateGrid } from '../../helpers/generate';
+import Paper from '@material-ui/core/Paper';
 
 // styles
 const GridContainer = styled.div`
@@ -24,24 +22,53 @@ const TileGrid = styled.div`
 
 class PicrossGrid extends Component {
   props: {
+    cursorOn: boolean,
     fillType: string,
-  };
-
-  state = {
-    solutionGrid: [],
-    playerGrid: [],
-    columnBounds: [],
-    rowBounds: [],
+    onTileChange: Function,
+    playerGrid: Array,
+    solutionGrid: Array,
+    columnBounds: Array,
+    rowBounds: Array,
+    position: Object,
+    onPositionChange: Function,
   };
 
   componentDidMount() {
-    this.setState({ ...generateGrid() }, () => {
-      console.table(this.state.solutionGrid);
-    });
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyPress, false);
   }
 
   getGridColumnSize = () => {
-    return (this.state.playerGrid[0] || []).length;
+    return (this.props.playerGrid[0] || []).length;
+  };
+
+  handleKeyPress = (e) => {
+    const onPositionChange = this.props.onPositionChange;
+    if (this.props.cursorOn) {
+      switch (e.key) {
+        case 'ArrowUp': {
+          onPositionChange({ rowOffset: -1, colOffset: 0 });
+          break;
+        }
+        case 'ArrowDown': {
+          onPositionChange({ rowOffset: 1, colOffset: 0 });
+          break;
+        }
+        case 'ArrowLeft': {
+          onPositionChange({ rowOffset: 0, colOffset: -1 });
+          break;
+        }
+        case 'ArrowRight': {
+          onPositionChange({ rowOffset: 0, colOffset: 1 });
+          break;
+        }
+        default:
+          break;
+      }
+    }
   };
 
   // column bounds
@@ -66,15 +93,20 @@ class PicrossGrid extends Component {
   // main grid
   displayGrid = () => {
     const els = [];
-    const solution = this.state.solutionGrid;
-    this.state.playerGrid.forEach((row, rowIndex) => {
+    const solution = this.props.solutionGrid;
+    const position = this.props.position;
+    const cursorOn = this.props.cursorOn;
+
+    this.props.playerGrid.forEach((row, rowIndex) => {
       row.forEach((item, colIndex) => {
         els.push(
           <Tile
+            highlightCol={cursorOn && position.row === rowIndex}
+            highlightRow={cursorOn && position.col === colIndex}
             rowIndex={rowIndex}
             colIndex={colIndex}
             key={rowIndex + '-' + colIndex}
-            onTitleChange={this.handleTileChange}
+            onTitleChange={this.props.onTileChange}
             value={row[colIndex]}
             solution={solution[rowIndex][colIndex]}
           />,
@@ -84,27 +116,6 @@ class PicrossGrid extends Component {
     return els;
   };
 
-  // update tile mark
-  handleTileChange = ({ rowIndex, colIndex, value }) => {
-    const updatedGrid = this.state.playerGrid
-      .slice()
-      .map((row, currRowIndex) => {
-        return row.map((_, currColIndex) => {
-          if (currRowIndex === rowIndex && currColIndex === colIndex) {
-            if (value) {
-              return null;
-            }
-            return this.props.fillType;
-          }
-          return row[currColIndex];
-        });
-      });
-
-    this.setState({
-      playerGrid: updatedGrid,
-    });
-  };
-
   render() {
     const numColumns = this.getGridColumnSize();
     return (
@@ -112,7 +123,7 @@ class PicrossGrid extends Component {
         <GridContainer>
           <div />
           <Grid container justify="space-around" alignItems="flex-end">
-            {this.displayDirectionCounts('column', this.state.columnBounds)}
+            {this.displayDirectionCounts('column', this.props.columnBounds)}
           </Grid>
           <Grid
             container
@@ -120,11 +131,13 @@ class PicrossGrid extends Component {
             alignItems="flex-end"
             direction="column"
           >
-            {this.displayDirectionCounts('row', this.state.rowBounds)}
+            {this.displayDirectionCounts('row', this.props.rowBounds)}
           </Grid>
-          <TileGrid templateColumns={`repeat(${numColumns}, auto)`}>
-            {this.displayGrid()}
-          </TileGrid>
+          <Paper elevation={5}>
+            <TileGrid templateColumns={`repeat(${numColumns}, auto)`}>
+              {this.displayGrid()}
+            </TileGrid>
+          </Paper>
         </GridContainer>
       </div>
     );

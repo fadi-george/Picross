@@ -3,3 +3,6 @@ export const FILL_TYPE = {
   FILL: 'FILL',
   MEMO: 'MEMO',
 };
+
+export const CURSOR = 'cursor';
+export const RESET = 'reset';
