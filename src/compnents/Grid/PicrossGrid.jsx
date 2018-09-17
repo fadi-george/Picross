@@ -22,16 +22,53 @@ const TileGrid = styled.div`
 
 class PicrossGrid extends Component {
   props: {
+    cursorOn: boolean,
     fillType: string,
     onTileChange: Function,
     playerGrid: Array,
     solutionGrid: Array,
     columnBounds: Array,
     rowBounds: Array,
+    position: Object,
+    onPositionChange: Function,
   };
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyPress);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyPress, false);
+  }
 
   getGridColumnSize = () => {
     return (this.props.playerGrid[0] || []).length;
+  };
+
+  handleKeyPress = (e) => {
+    const onPositionChange = this.props.onPositionChange;
+    if (this.props.cursorOn) {
+      switch (e.key) {
+        case 'ArrowUp': {
+          onPositionChange({ rowOffset: -1, colOffset: 0 });
+          break;
+        }
+        case 'ArrowDown': {
+          onPositionChange({ rowOffset: 1, colOffset: 0 });
+          break;
+        }
+        case 'ArrowLeft': {
+          onPositionChange({ rowOffset: 0, colOffset: -1 });
+          break;
+        }
+        case 'ArrowRight': {
+          onPositionChange({ rowOffset: 0, colOffset: 1 });
+          break;
+        }
+        default:
+          break;
+      }
+    }
   };
 
   // column bounds
@@ -57,10 +94,15 @@ class PicrossGrid extends Component {
   displayGrid = () => {
     const els = [];
     const solution = this.props.solutionGrid;
+    const position = this.props.position;
+    const cursorOn = this.props.cursorOn;
+
     this.props.playerGrid.forEach((row, rowIndex) => {
       row.forEach((item, colIndex) => {
         els.push(
           <Tile
+            highlightCol={cursorOn && position.row === rowIndex}
+            highlightRow={cursorOn && position.col === colIndex}
             rowIndex={rowIndex}
             colIndex={colIndex}
             key={rowIndex + '-' + colIndex}
