@@ -19,7 +19,7 @@ export const generateGrid = ({ rows = 5, columns = 5 } = {}) => {
 };
 
 export const getGridBoundaries = (grid) => {
-  const columnBounds = [];
+  const colBounds = [];
   const rowBounds = [];
   const rowLength = grid.length;
   const columnLength = grid[0].length;
@@ -55,7 +55,7 @@ export const getGridBoundaries = (grid) => {
   for (let col = 0; col < columnLength; col++) {
     let colStreak = 0;
 
-    columnBounds[col] = [];
+    colBounds[col] = [];
     for (let row = 0; row < rowLength; row++) {
       const currRowItem = grid[row][col];
       const prevRowItem = grid[row - 1] ? grid[row - 1][col] : undefined;
@@ -63,23 +63,23 @@ export const getGridBoundaries = (grid) => {
       // only counting streaks of non "empty" values
       if (currRowItem === '') {
         if (prevRowItem !== '' && row !== 0) {
-          columnBounds[col].push(colStreak);
+          colBounds[col].push(colStreak);
           colStreak = 0;
         }
       } else {
         colStreak++;
         if (row === rowLength - 1) {
-          columnBounds[col].push(colStreak);
+          colBounds[col].push(colStreak);
         }
       }
     }
-    if (columnBounds[col].length === 0) {
-      columnBounds[col].push(0);
+    if (colBounds[col].length === 0) {
+      colBounds[col].push(0);
     }
   }
 
   return {
-    columnBounds,
+    colBounds,
     rowBounds,
   };
-};
+}

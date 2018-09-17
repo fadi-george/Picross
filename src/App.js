@@ -2,11 +2,14 @@
 import React, { Component } from 'react';
 import './App.css';
 
+// helpers
+import { solveSingle } from './helpers/solver';
+
 // components
 import styled from 'styled-components';
 
 // type
-import { FILL_TYPE, CURSOR, RESET } from './constants/grid';
+import { FILL_TYPE, CURSOR, RESET, SOLVE } from './constants/grid';
 
 // MUI Components
 import AppBar from '@material-ui/core/AppBar/AppBar';
@@ -32,7 +35,7 @@ class App extends Component {
     autoFill: false,
     solutionGrid: [],
     playerGrid: [],
-    columnBounds: [],
+    colBounds: [],
     rowBounds: [],
     cursorOn: false,
     position: {
@@ -42,9 +45,7 @@ class App extends Component {
   };
 
   componentDidMount() {
-    this.setState({ ...generateGrid() }, () => {
-      console.table(this.state.solutionGrid);
-    });
+    this.resetGrid();
   }
 
   // grid methods
@@ -86,6 +87,24 @@ class App extends Component {
     }));
   };
 
+  handleSolve = (inputGrid) => {
+    const grid = solveSingle(
+      inputGrid,
+      this.state.rowBounds,
+      this.state.colBounds,
+    );
+    this.setState(
+      () => ({
+        playerGrid: grid,
+      }),
+      () => {
+        setTimeout(() => {
+          this.handleSolve(this.state.playerGrid);
+        }, 5000);
+      },
+    );
+  };
+
   /// toolbar methods
   handleToolClick = (key) => {
     switch (key) {
@@ -111,6 +130,13 @@ class App extends Component {
         });
         break;
 
+      case SOLVE:
+        const inputGrid = this.state.playerGrid.map((row) =>
+          row.slice().map(() => null),
+        );
+        this.handleSolve(inputGrid);
+        break;
+
       default:
         break;
     }
@@ -124,7 +150,7 @@ class App extends Component {
         <AppBar position="absolute">
           <Toolbar>
             <Typography variant="title" color="inherit">
-              Picross
+              Picross Puzzle Game
             </Typography>
           </Toolbar>
         </AppBar>
@@ -137,7 +163,7 @@ class App extends Component {
                 onTileChange={this.handleTileChange}
                 solutionGrid={this.state.solutionGrid}
                 playerGrid={this.state.playerGrid}
-                columnBounds={this.state.columnBounds}
+                colBounds={this.state.colBounds}
                 rowBounds={this.state.rowBounds}
                 onPositionChange={this.handlePositionChange}
                 position={this.state.position}

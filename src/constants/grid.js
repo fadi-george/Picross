@@ -6,3 +6,4 @@ export const FILL_TYPE = {
 
 export const CURSOR = 'cursor';
 export const RESET = 'reset';
+export const SOLVE = 'solve';

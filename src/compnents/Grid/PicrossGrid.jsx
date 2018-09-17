@@ -27,7 +27,7 @@ class PicrossGrid extends Component {
     onTileChange: Function,
     playerGrid: Array,
     solutionGrid: Array,
-    columnBounds: Array,
+    colBounds: Array,
     rowBounds: Array,
     position: Object,
     onPositionChange: Function,
@@ -123,7 +123,7 @@ class PicrossGrid extends Component {
         <GridContainer>
           <div />
           <Grid container justify="space-around" alignItems="flex-end">
-            {this.displayDirectionCounts('column', this.props.columnBounds)}
+            {this.displayDirectionCounts('column', this.props.colBounds)}
           </Grid>
           <Grid
             container

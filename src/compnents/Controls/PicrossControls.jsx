@@ -6,16 +6,18 @@ import ReplayIcon from '@material-ui/icons/Replay';
 import GamepadIcon from '@material-ui/icons/Gamepad';
 import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from '@material-ui/icons/Close';
+import PlayIcon from '@material-ui/icons/PlayCircleFilled';
 
 // components
 import Tooltip from '@material-ui/core/Tooltip';
 import Toolbar from '@material-ui/core/Toolbar/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
+import Divider from '@material-ui/core/Divider';
 
 // constants
 import yellow from '@material-ui/core/colors/yellow';
-import { FILL_TYPE, CURSOR, RESET } from '../../constants/grid';
+import { FILL_TYPE, CURSOR, RESET, SOLVE } from '../../constants/grid';
 
 const styles = {
   toolBar: {
@@ -52,6 +54,7 @@ class PicrossControls extends Component {
       placement: 'right',
       enterDelay: 500,
     };
+    // const disable = ;
 
     return (
       <Paper>
@@ -100,6 +103,18 @@ class PicrossControls extends Component {
               }}
             >
               <CloseIcon style={styles.closeIcon} />
+            </IconButton>
+          </Tooltip>
+
+          {/* Solver */}
+          <Divider style={{ width: '100%', margin: '8px 0px' }} />
+          <Tooltip title="Solve Puzzle" {...toolTipProps}>
+            <IconButton
+              onClick={() => {
+                onToolClick(SOLVE);
+              }}
+            >
+              <PlayIcon />
             </IconButton>
           </Tooltip>
         </Toolbar>
