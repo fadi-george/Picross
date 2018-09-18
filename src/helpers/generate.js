@@ -1,15 +1,24 @@
-export const generateGrid = ({ rows = 3, columns = 3 } = {}) => {
-  const playerGrid = Array(rows)
+export const generateGrid = ({ rows = 5, columns = 5 } = {}) => {
+  let playerGrid = Array(rows)
     .fill()
     .map(() => new Array(columns).fill().map(() => null));
 
-  const solutionGrid = Array(rows)
+  let solutionGrid = Array(rows)
     .fill()
     .map(() =>
       new Array(columns)
         .fill()
         .map(() => (Math.round(Math.random()) ? '#000000' : '')),
     );
+
+  // temp
+  solutionGrid = [
+ ["#000000", "", "#000000", "", "#000000"],
+["", "", "#000000", "", ""],
+["", "#000000", "#000000", "#000000", ""],
+ ["#000000", "#000000", "", "", "#000000"],
+  ["", "#000000", "", "#000000", "#000000"]
+  ];
 
   return {
     playerGrid,
@@ -82,4 +91,4 @@ export const getGridBoundaries = (grid) => {
     colBounds,
     rowBounds,
   };
-}
+};

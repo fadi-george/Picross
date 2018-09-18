@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 // helpers
-import { solveSingle } from './helpers/solver';
+import { solveSingle, isSolved } from './helpers/solver';
 
 // components
 import styled from 'styled-components';
@@ -100,9 +100,13 @@ class App extends Component {
       }),
       () => {
         if (this.state.isSolving) {
-          setTimeout(() => {
-            this.handleSolve(this.state.playerGrid);
-          }, 5000);
+          if (!isSolved(this.state.playerGrid, this.state.solutionGrid)) {
+            setTimeout(() => {
+              this.handleSolve(this.state.playerGrid);
+            }, 5000);
+          } else {
+            this.setState({ isSolving: false });
+          }
         }
       },
     );

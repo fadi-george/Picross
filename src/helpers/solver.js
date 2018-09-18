@@ -1,7 +1,7 @@
 // @flow
 import { FILL_TYPE } from '../constants/grid';
 
-const getBlockPossibilities = (
+export const getBlockPossibilities = (
   bounds: Array = [],
   length: number,
   fixedBlocks: Array,
@@ -26,13 +26,10 @@ const getBlockPossibilities = (
         ...configArray.slice(i + count),
       ];
 
-      console.log(
-        'here', bounds, length, fixedBlocks,
-      );
       let configurations = getBlockPossibilities(
         bounds.slice(1),
         length - count - i - 1,
-        fixedBlocks.slice(i + count),
+        fixedBlocks.slice(count + i + 1),
       );
 
       if (configurations.length) {
@@ -45,7 +42,7 @@ const getBlockPossibilities = (
 
       // configurations must be valid
       result = result.filter((blocks: Array<any>) => {
-        return fixedBlocks.some((value, index) => {
+        return fixedBlocks.every((value, index) => {
           if (value !== null) {
             if (value !== blocks[index]) {
               return false;
@@ -95,11 +92,9 @@ export const solveSingle = (
   rowBounds: Array,
   colBounds: Array,
 ) => {
-  console.log('iter')
-  console.log('----------------------------------------------')
   const updatedGrid = grid.map((row) => row.slice());
-  const numrows = grid.length;
-  const numCols = grid[0].length;
+  const numrows = updatedGrid.length;
+  const numCols = updatedGrid[0].length;
 
   // going through each row
   let possibleBlockArrays;
@@ -123,7 +118,9 @@ export const solveSingle = (
 
   // going through each column
   for (let colIndex = 0; colIndex < numCols; colIndex++) {
-    const gridColumn = grid.map((_, rowIndex) => grid[rowIndex][colIndex]);
+    const gridColumn = updatedGrid.map((_, rowIndex) => {
+      return updatedGrid[rowIndex][colIndex];
+    });
     possibleBlockArrays = getBlockPossibilities(
       colBounds[colIndex],
       numrows,
@@ -137,8 +134,6 @@ export const solveSingle = (
       }
     });
   }
-
-  console.table(updatedGrid);
   return updatedGrid;
 };
 
