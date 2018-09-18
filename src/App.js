@@ -42,6 +42,7 @@ class App extends Component {
       row: 0,
       col: 0,
     },
+    isSolving: false,
   };
 
   componentDidMount() {
@@ -98,9 +99,11 @@ class App extends Component {
         playerGrid: grid,
       }),
       () => {
-        setTimeout(() => {
-          this.handleSolve(this.state.playerGrid);
-        }, 5000);
+        if (this.state.isSolving) {
+          setTimeout(() => {
+            this.handleSolve(this.state.playerGrid);
+          }, 5000);
+        }
       },
     );
   };
@@ -131,10 +134,20 @@ class App extends Component {
         break;
 
       case SOLVE:
-        const inputGrid = this.state.playerGrid.map((row) =>
-          row.slice().map(() => null),
+        this.setState(
+          (prevState) => ({
+            isSolving: !prevState.isSolving,
+          }),
+          () => {
+            if (this.state.isSolving) {
+              const inputGrid = this.state.playerGrid.map((row) =>
+                row.slice().map(() => null),
+              );
+              this.handleSolve(inputGrid);
+            }
+          },
         );
-        this.handleSolve(inputGrid);
+
         break;
 
       default:
@@ -174,6 +187,7 @@ class App extends Component {
                 onToolClick={this.handleToolClick}
                 cursorOn={cursorOn}
                 fillType={this.state.fillType}
+                isSolving={this.state.isSolving}
               />
             </Grid>
           </Grid>

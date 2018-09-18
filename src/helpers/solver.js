@@ -1,7 +1,11 @@
 // @flow
 import { FILL_TYPE } from '../constants/grid';
 
-const getBlockPossibilities = (bounds = [], length) => {
+const getBlockPossibilities = (
+  bounds: Array = [],
+  length: number,
+  fixedBlocks: Array,
+) => {
   let result = [];
   if (bounds.length && length >= 1) {
     let count = bounds[0];
@@ -22,9 +26,13 @@ const getBlockPossibilities = (bounds = [], length) => {
         ...configArray.slice(i + count),
       ];
 
+      console.log(
+        'here', bounds, length, fixedBlocks,
+      );
       let configurations = getBlockPossibilities(
         bounds.slice(1),
         length - count - i - 1,
+        fixedBlocks.slice(i + count),
       );
 
       if (configurations.length) {
@@ -34,6 +42,18 @@ const getBlockPossibilities = (bounds = [], length) => {
       } else {
         result.push(temp);
       }
+
+      // configurations must be valid
+      result = result.filter((blocks: Array<any>) => {
+        return fixedBlocks.some((value, index) => {
+          if (value !== null) {
+            if (value !== blocks[index]) {
+              return false;
+            }
+          }
+          return true;
+        });
+      });
     }
   }
   return result;
@@ -75,6 +95,8 @@ export const solveSingle = (
   rowBounds: Array,
   colBounds: Array,
 ) => {
+  console.log('iter')
+  console.log('----------------------------------------------')
   const updatedGrid = grid.map((row) => row.slice());
   const numrows = grid.length;
   const numCols = grid[0].length;
@@ -84,7 +106,11 @@ export const solveSingle = (
   let mergedBlockArray;
   for (let rowIndex = 0; rowIndex < numrows; rowIndex++) {
     // get and merged possible placement of filled/crossed blocks
-    possibleBlockArrays = getBlockPossibilities(rowBounds[rowIndex], numCols);
+    possibleBlockArrays = getBlockPossibilities(
+      rowBounds[rowIndex],
+      numCols,
+      updatedGrid[rowIndex],
+    );
     mergedBlockArray = mergeBlockPossibilities(possibleBlockArrays);
 
     // merged determined placement of blocks with existing blocks
@@ -97,7 +123,12 @@ export const solveSingle = (
 
   // going through each column
   for (let colIndex = 0; colIndex < numCols; colIndex++) {
-    possibleBlockArrays = getBlockPossibilities(colBounds[colIndex], numrows);
+    const gridColumn = grid.map((_, rowIndex) => grid[rowIndex][colIndex]);
+    possibleBlockArrays = getBlockPossibilities(
+      colBounds[colIndex],
+      numrows,
+      gridColumn,
+    );
     mergedBlockArray = mergeBlockPossibilities(possibleBlockArrays);
 
     mergedBlockArray.forEach((value, rowIndex) => {
@@ -107,7 +138,7 @@ export const solveSingle = (
     });
   }
 
-  console.table(updatedGrid)
+  console.table(updatedGrid);
   return updatedGrid;
 };
 

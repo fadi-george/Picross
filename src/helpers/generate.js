@@ -1,4 +1,4 @@
-export const generateGrid = ({ rows = 5, columns = 5 } = {}) => {
+export const generateGrid = ({ rows = 3, columns = 3 } = {}) => {
   const playerGrid = Array(rows)
     .fill()
     .map(() => new Array(columns).fill().map(() => null));

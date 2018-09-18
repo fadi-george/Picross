@@ -7,6 +7,7 @@ import GamepadIcon from '@material-ui/icons/Gamepad';
 import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from '@material-ui/icons/Close';
 import PlayIcon from '@material-ui/icons/PlayCircleFilled';
+import PauseIcon from '@material-ui/icons/PauseCircleFilled';
 
 // components
 import Tooltip from '@material-ui/core/Tooltip';
@@ -45,6 +46,7 @@ class PicrossControls extends Component {
     onToolClick: Function,
     cursorOn: boolean,
     fillType: string,
+    isSolving: boolean,
   };
 
   render() {
@@ -114,7 +116,7 @@ class PicrossControls extends Component {
                 onToolClick(SOLVE);
               }}
             >
-              <PlayIcon />
+              {this.props.isSolving ? <PauseIcon /> : <PlayIcon />}
             </IconButton>
           </Tooltip>
         </Toolbar>
